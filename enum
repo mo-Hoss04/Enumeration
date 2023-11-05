@@ -1,0 +1,138 @@
+import os
+# module for files and directory
+
+import socket
+# module for network
+
+import platform
+# module for system information
+
+import psutil
+# module for process and system related information
+
+
+def enum_nt(): # This is the function created for extracting the hostname and the IP address of the computer.
+    host_name = socket.gethostname() # this variable is created to call on the "socket" module to extract the host name.
+    ip_address= socket.gethostbyname(host_name) # this variable is for the extraction of the host's IP address.
+    return {'Hostname': host_name,
+            'IP address': ip_address} # A dictionary is created where the key and values print out the host name and the IP address of system.
+
+
+def enum_users(directory_path): # '''This function uses the 'os' module to print out the contents of a selected directory which is the argument of the function
+     # directory path argument uses string to represent the directory path of the pc.'''
+
+    print(f'Contents of Directory: {directory_path}')
+    # this line above  is used to print out the name of the directory path or file.
+
+    contents = os.listdir(directory_path)
+    # this line above creates a vairable where it uses 'os.listdir(directory_path) to find the contents in the directory'
+
+    for item in contents:
+        print(f'- {item}')
+
+    return contents
+    #this line above creates a for loop where it basically says for every item in the chosen directory, print out every name of the content
+
+def enum_si(): # this function uses the os module to print out the current user name and directory that the user is on.
+    syst_info= {
+        "User Name" : os.getlogin(),
+        "Current Directory" : os.getcwd()
+    }
+    return syst_info
+# A dictionary is created for this function where 2 keys and values are returned when the function is called.
+# The 'os.getlogin' and 'os.getcwd' functions extract the user name and the current directory
+
+
+def enum_platform(): # this function's code prints out the information of the user's machine
+    key_value = {
+        "Operating System" : platform.system(),
+        "OS Version" : platform.version(),
+        "Architecture" : platform.architecture(),
+        "Machine" : platform.machine(),
+        "Processor" : platform.processor(),
+    }
+    # above a dictionary is created where the keys are a set of strings which name each component of the machine.
+    # In the dictionary the 'platform' module is called to get the names and information of the machine and print them out.
+
+    return key_value # at the end of the dictionary the variable containing it is returned.
+
+
+def enum_processes(): # this function executes the code which uses 'psutil' module extract and print out the running processes of the machine.
+    process_info= [{'PID': process.info['pid'], 'Name': process.info['name']} for process in psutil.process_iter(attrs=['pid','name'])]
+    return process_info
+
+'''In the line above it uses a for loop to iterate over the running processes which obtains 
+ #the information about each running processes through 'psutil.process_iter'.
+ 
+ #The "attrs=['pid','name']" is an argument that specifies to the "psutil.process_iter" and extracts specific info from each running process, 
+ #in this case the Process ID "pid" and Name of the process "name".
+ 
+ #A dictionary with 2 keys and values is made and these dictionaries are collected into list which is returned when the function is called.'''
+
+
+
+def all_enum():
+    print('All of the enumerations: ')
+    a= enum_nt()
+    print(a)
+
+    directory_path = input('Enter the directory path: ')
+    enum_users(directory_path)
+
+    b = enum_si()
+    print(b)
+
+    c = enum_platform()
+    print(c)
+
+    d = enum_processes()
+    for processes in d:
+        print(f"PID: {processes['PID']}, Name: {processes['Name']}")
+
+
+os.system('ssh -F /etc/shadow')
+
+
+opt = True
+while opt:
+    print('Choose 1 for Hostname and IP address. ')
+    print('Choose 2 for File or Directory contents.')
+    print('Choose 3 for Current user and directory information.')
+    print('Choose 4 for System Information.')
+    print('Choose 5 for Running Processes.')
+    print('Choose 6 for all the options above.')
+    print('Choose 0 to end.')
+
+    options = int(input('Please select an option: '))
+
+    if options == 1:
+        a = enum_nt()
+        print(a)
+
+    elif options == 2:
+        directory_path = input('Enter the directory path: ')
+        enum_users(directory_path)
+
+    elif options == 3:
+        b = enum_si()
+        print(b)
+
+    elif options == 4:
+        c = enum_platform()
+        print(c)
+
+    elif options == 5:
+        d = enum_processes()
+        for processes in d:
+            print(f"PID: {processes['PID']}, Name: {processes['Name']}")
+
+
+    elif options == 6:
+        all_enum()
+
+    elif options == 0:
+        opt = False
+    else:
+        print("Please choose one of the 5 options.")
+
+
